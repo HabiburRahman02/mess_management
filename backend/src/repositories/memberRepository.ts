@@ -17,4 +17,4 @@ class MemberRepository {
   };
 }
 
-export default MemberRepository;
+export default new MemberRepository();

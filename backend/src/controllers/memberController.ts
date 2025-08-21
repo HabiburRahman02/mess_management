@@ -1,17 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import MemberRepository from "../repositories/memberRepository";
 import { Member } from "../interfaces/memberInterface";
+import memberService from "../services/memberService";
 
 class MemberController {
-  private memberRepo: MemberRepository;
-
-  constructor() {
-    this.memberRepo = new MemberRepository();
-  }
-
   getMembers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const member: Member[] = await this.memberRepo.getMembers();
+      const member: Member[] = await memberService.getMembers();
       res.status(200).json({
         statusText: "SUCCESS",
         data: member,
@@ -24,16 +18,19 @@ class MemberController {
   createMember = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const member: Member = req.body;
-      const newMember: Member = await this.memberRepo.createMember(member);
+      const newMember: Member = await memberService.createMember(member);
       res.status(201).json({
         statusText: "SUCCESS",
         data: newMember,
       });
-    } catch (err) {
-      res.status(500).json({ error: "Failed to create member" });
+    } catch (err: any) {
+      console.log("ERR", err?.message);
+      const message = err.message || "Failed to create member";
+      // duplicate or validation err
+      res.status(400).json({ error: message });
       next(err);
     }
   };
 }
 
-export default MemberController;
+export default new MemberController();

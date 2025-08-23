@@ -4,13 +4,10 @@ WORKDIR /app
 
 COPY package*.json ./
 
-# Regular dependencies
 RUN npm install
-
-# Dev dependencies (TypeScript types)
-RUN npm install --save-dev @types/pg
 
 COPY . .
 
 EXPOSE 5000
+
 CMD ["npm", "run", "dev"]

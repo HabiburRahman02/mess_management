@@ -1,17 +1,19 @@
+version: "3.9"
+
 services:
-  # frontend_app:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile.dev
-  #   ports:
-  #     - "3002:3002"
-  #   volumes:
-  #     - ./frontend:/app
-  #     - /app/node_modules
-  #   depends_on:
-  #     - backend_app
-  #   networks:
-  #     - app-network
+  frontend_app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend_app
+    networks:
+      - app-network
 
   backend_app:
     build:

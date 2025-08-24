@@ -1,52 +1,43 @@
-'use client';
-import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { memberService } from '@/services/memberService';
 import InputField from '@/components/common/InputField';
-import Swal from 'sweetalert2';
+import { memberService } from '@/services/memberService';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 
 type UpdateMemberModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  memberId?: string; // selected member id
 };
 
-const UpdateMemberModal: React.FC<UpdateMemberModalProps> = ({ isOpen, onClose }) => {
+const UpdateMemberModal: React.FC<UpdateMemberModalProps> = ({ isOpen, onClose, memberId }) => {
+  const queryClient = useQueryClient();
+
+  // Fetch all members
+  const { data: members } = useQuery({
+    queryKey: ['members'],
+    queryFn: memberService.getMembers,
+  });
+
+  // Find selected member
+  const selectedMember = members?.find((m: any) => m.rid === memberId);
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const queryClient = useQueryClient();
+
+  // Set state when modal opens
+  useEffect(() => {
+    if (selectedMember) {
+      setName(selectedMember.name);
+      setEmail(selectedMember.email);
+      setPhone(selectedMember.phone);
+    }
+  }, [selectedMember]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    // e.preventDefault();
-
-    // if (!name || !email || !phone) return;
-    // const newMember = { name, email, phone };
-
-    // try {
-    //   const res = await memberService.addMember(newMember);
-    //   console.log('res', res);
-    //   if (res.statusText === 'SUCCESS') {
-    //     Swal.fire({
-    //       title: `Congratulation!`,
-    //       text: `Now ${name} is new member in you mess`,
-    //       icon: 'success',
-    //       showConfirmButton: false,
-    //       timer: 5000,
-    //       timerProgressBar: true,
-    //     });
-    //   }
-    //   setName('');
-    //   setEmail('');
-    //   setPhone('');
-    //   onClose();
-    //   queryClient.invalidateQueries({ queryKey: ['members'] });
-    // } catch (error) {
-    //   Swal.fire({
-    //     title: `Failed`,
-    //     text: `Failed to deposit`,
-    //     icon: 'error',
-    //   });
-    // }
+    e.preventDefault();
+    const updatedMember = { name, email, phone };
+    console.log(updatedMember);
   };
 
   if (!isOpen) return null;
@@ -55,7 +46,6 @@ const UpdateMemberModal: React.FC<UpdateMemberModalProps> = ({ isOpen, onClose }
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
       <div className="w-full max-w-sm md:max-w-md rounded bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold mb-4">Update Member</h2>
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <InputField
             label="Name"
@@ -74,8 +64,8 @@ const UpdateMemberModal: React.FC<UpdateMemberModalProps> = ({ isOpen, onClose }
           />
           <InputField
             label="Phone"
-            value={phone}
             type="number"
+            value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="Enter member phone"
             required

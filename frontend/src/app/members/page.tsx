@@ -19,6 +19,7 @@ type Member = {
 };
 
 const Members: React.FC = () => {
+  const [memberId, setMemberId] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -34,9 +35,10 @@ const Members: React.FC = () => {
   });
 
   const handleDeleteMember = async (rid: string) => {
+    queryClient.invalidateQueries({ queryKey: ['members'] });
     Swal.fire({
       title: 'Are you sure?',
-      text: 'You to delete this member',
+      text: 'You want to delete this member',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -44,21 +46,29 @@ const Members: React.FC = () => {
       confirmButtonText: 'Yes, delete it!',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const deleteResult = await memberService.deleteMember(rid);
-        console.log('result', deleteResult);
-        queryClient.invalidateQueries({ queryKey: ['members'] });
-        if (deleteResult.statusText === 'success') {
-          refetch();
+        try {
+          const deleteResult = await memberService.deleteMember(rid);
+
+          queryClient.invalidateQueries({ queryKey: ['members'] });
+
+          if (deleteResult.success) {
+            Swal.fire({
+              title: 'Deleted!',
+              text: deleteResult.message,
+              icon: 'success',
+            });
+          } else {
+            Swal.fire({
+              title: 'Delete Failed!',
+              text: deleteResult.message,
+              icon: 'error',
+            });
+          }
+        } catch (error) {
           Swal.fire({
-            title: 'Deleted!',
-            text: 'Member deleted successfully',
-            icon: 'success',
-          });
-        } else {
-          Swal.fire({
-            title: 'Deleted Failed!',
-            text: 'Member deleted failed',
-            icon: 'success',
+            title: 'Error!',
+            text: 'This member already deposit. thats why you can not delete',
+            icon: 'error',
           });
         }
       }
@@ -79,6 +89,7 @@ const Members: React.FC = () => {
       <UpdateMemberModal
         isOpen={isUpdateModalOpen}
         onClose={() => setIsUpdateModalOpen(false)}
+        memberId={memberId}
       ></UpdateMemberModal>
       {/* Member Header */}
       <div className="flex justify-between items-center mb-6">
@@ -127,7 +138,10 @@ const Members: React.FC = () => {
                   {/* Action Column */}
                   <td className=" gap-2 whitespace-nowrap px-4 py-4 text-center flex items-center">
                     <button
-                      onClick={() => setIsUpdateModalOpen(true)}
+                      onClick={() => {
+                        setMemberId(member.rid);
+                        setIsUpdateModalOpen(true);
+                      }}
                       className="text-sky-600 hover:text-sky-800 flex items-center justify-center cursor-pointer"
                     >
                       <FaEdit />

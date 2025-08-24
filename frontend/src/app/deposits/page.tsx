@@ -87,9 +87,9 @@ const Deposits: React.FC = () => {
                   <td className="whitespace-nowrap px-4 py-4">{idx + 1}</td>
                   <td className="whitespace-nowrap px-4 py-4">{deposit.name || 'N/A'}</td>
                   <td className="whitespace-nowrap px-4 py-4">{deposit.email || 'N/A'}</td>
-                  <td className="whitespace-nowrap px-4 py-4">{deposit.total_deposit || 'N/A'}</td>
+                  <td className="whitespace-nowrap px-4 py-4">{deposit.total_deposit || 'N/A'} TK</td>
                   {/* Action Column */}
-                  <td className="whitespace-nowrap px-4 py-4 text-center flex gap-2 items-center">
+                  <td className="whitespace-nowrap px-4 py-4 text-center flex gap-3 items-center">
                     <button
                       onClick={() => {
                         setSelectedId(deposit.rid);
@@ -99,7 +99,6 @@ const Deposits: React.FC = () => {
                     >
                       <AiOutlineEye className="h-4 w-4" />
                     </button>
-                    {JSON.stringify(deposit.rid)}
                     <button
                       onClick={() => {
                         setSelectedRid(deposit.rid);

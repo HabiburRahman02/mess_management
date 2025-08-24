@@ -58,9 +58,9 @@ VALUES
 -- Insert sample deposits (January)
 INSERT INTO deposits (rid, member_id, amount, month, created_at, updated_at)
 VALUES 
-(uuid_generate_v4(), '221cc6d7-3f88-4237-811e-baed7a43a997', 5000.00, '2025-08', '2025-08-23 21:00:00+06', '2025-08-23 21:00:00+06'),
-(uuid_generate_v4(), '8eeb209c-4f84-4bf2-bf5b-a01dfb405e30', 4500.00, '2025-08', '2025-08-23 22:10:00+06', '2025-08-23 22:10:00+06'),
-(uuid_generate_v4(), 'd97b6972-742d-4e0a-873f-bcd51cfb3af5', 4000.00, '2025-08', '2025-08-23 23:20:00+06', '2025-08-23 23:20:00+06');
+(uuid_generate_v4(), '389fa032-2ccc-4786-aff2-93daae99249b', 5000.00, '2025-08', '2025-08-23 21:00:00+06', '2025-08-23 21:00:00+06'),
+(uuid_generate_v4(), '0cc73ddf-094a-45cd-b787-532b640ef3c7', 4500.00, '2025-08', '2025-08-23 22:10:00+06', '2025-08-23 22:10:00+06'),
+(uuid_generate_v4(), '716ca169-1435-465b-b86d-f80413c4a41d', 4000.00, '2025-08', '2025-08-23 23:20:00+06', '2025-08-23 23:20:00+06');
 
 INSERT INTO deposits (rid, member_id, amount, month, created_at, updated_at)
 VALUES (
@@ -71,3 +71,4 @@ VALUES (
     (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Dhaka'),
     (CURRENT_TIMESTAMP AT TIME ZONE 'Asia/Dhaka')
 );
+

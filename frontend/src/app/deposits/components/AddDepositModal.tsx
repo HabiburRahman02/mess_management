@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { depositService } from '@/services/depositService';
 import Swal from 'sweetalert2';
+import { memberService } from '@/services/memberService';
 
 type AddDepositModalProps = {
   isOpen: boolean;
@@ -16,8 +17,8 @@ const AddDepositModal: React.FC<AddDepositModalProps> = ({ isOpen, onClose }) =>
 
   // fetch all members for dropdown
   const { data: members } = useQuery({
-    queryKey: ['deposits'],
-    queryFn: depositService.getDeposits,
+    queryKey: ['members'],
+    queryFn: memberService.getMembers,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

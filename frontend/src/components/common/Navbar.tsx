@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Navbar() {
   return (
@@ -23,11 +23,14 @@ export default function Navbar() {
         <Link href="/members" className="hover:text-gray-200 transition">
           Members
         </Link>
-          <Link href="/deposits" className="hover:text-gray-200 transition">
+        <Link href="/deposits" className="hover:text-gray-200 transition">
           Deposits
         </Link>
         <Link href="/meals" className="hover:text-gray-200 transition">
           Meals
+        </Link>
+        <Link href="/meal-rate" className="hover:text-gray-200 transition">
+          Meal Rate
         </Link>
       </div>
     </nav>

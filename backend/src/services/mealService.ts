@@ -12,6 +12,10 @@ class MealService {
   addMeal = async (memberId: string, mealCount: number) => {
     return await mealRepository.addMeal(memberId, mealCount);
   };
+
+  updateMealByRid = async (rid: string, mealCount: number) => {
+    return await mealRepository.updateMealByRid(rid, mealCount);
+  };
 }
 
 export default new MealService();

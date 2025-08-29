@@ -15,4 +15,9 @@ export const mealService = {
     const res = await axiosInstance.post('/meals', { member_id, meal_count });
     return res?.data?.data;
   },
+
+  getMealByMealRid: async (rid: string) => {
+    const res = await axiosInstance.get(`meals/${rid}`);
+    return res?.data?.data;
+  },
 };

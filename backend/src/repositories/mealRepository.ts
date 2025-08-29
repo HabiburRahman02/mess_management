@@ -16,6 +16,7 @@ class MealRepository {
         `);
     return result.rows;
   };
+
   getMealDetailsByMemberId = async (memberId: string) => {
     const result = await pool.query(
       `
@@ -34,7 +35,7 @@ class MealRepository {
                     'created_time', TO_CHAR(m.created_at, 'HH12:MI AM'),
                     'updated_date', TO_CHAR(m.updated_at, 'DD-Mon-YYYY'),
                     'updated_time', TO_CHAR(m.updated_at, 'HH12:MI AM')
-                ) ORDER BY m.meal_date
+                ) ORDER BY m.meal_date DESC
             ) AS meal_details
         FROM meals m
         JOIN members mb ON m.member_id = mb.rid
@@ -45,6 +46,7 @@ class MealRepository {
     );
     return result.rows[0];
   };
+
   addMeal = async (memberId: string, mealCount: number) => {
     const result = await pool.query(
       `
@@ -59,6 +61,21 @@ class MealRepository {
       [memberId, mealCount],
     );
     return result.rows;
+  };
+
+  updateMealByRid = async (rid: string, mealCount: number) => {
+    const result = await pool.query(
+      `
+    UPDATE meals
+    SET 
+      meal_count = $1, 
+      updated_at = NOW() AT TIME ZONE 'Asia/Dhaka'
+    WHERE rid = $2
+    RETURNING *
+      `,
+      [mealCount, rid],
+    );
+    return result.rows[0];
   };
 }
 

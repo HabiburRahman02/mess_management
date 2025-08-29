@@ -51,6 +51,25 @@ class MealController {
       next(error);
     }
   };
+
+  updateMealByRid = async (req: Request, res: Response, next: NextFunction) => {
+    const rid = req.params.rid;
+    const { mealCount } = req.body;
+    try {
+      const result = await mealService.updateMealByRid(rid, mealCount);
+      res.status(200).json({
+        statusText: 'SUCCESS',
+        message: 'Meal updated successfully',
+        data: result,
+      });
+    } catch (error) {
+      logger.error('Failed to update deposit', {
+        input: req.body,
+        error,
+      });
+      next(error);
+    }
+  };
 }
 
 export default new MealController();

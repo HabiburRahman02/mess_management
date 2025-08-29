@@ -8,22 +8,42 @@ class MemberRepository {
   };
 
   createMember = async (member: Member): Promise<Member> => {
-    const { name, email, phone } = member;
+    const { name, email, address, phone } = member;
     const result = await pool.query(
-      'INSERT INTO members (name, email, phone) VALUES ($1, $2, $3) RETURNING *',
-      [name, email, phone],
+      'INSERT INTO members (name, email, address, phone) VALUES ($1, $2, $3, $4) RETURNING *',
+      [name, email, address, phone],
     );
     return result.rows[0];
   };
- deleteMember= async (rid: string) => {
+
+  deleteMember = async (rid: string) => {
     const result = await pool.query(
       `DELETE FROM members
        WHERE rid = $1
        RETURNING *`,
-      [rid]
+      [rid],
     );
-    return result.rows[0]; // শুধু single row return
-  },
+    return result.rows[0];
+  };
+  updateMemberByRid = async (updatedMember: Member, rid: string) => {
+    const { name, email, address, phone, status } = updatedMember;
+    const result = await pool.query(
+      `
+    UPDATE members
+    SET 
+      name = $1,
+      email = $2,
+      address = $3,
+      phone = $4,
+      status = $5,
+      updated_at = NOW()
+    WHERE rid = $6
+    RETURNING *;
+    `,
+      [name, email, address, phone, status, rid],
+    );
+    return result.rows[0];
+  };
 }
 
 export default new MemberRepository();

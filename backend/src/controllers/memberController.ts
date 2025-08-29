@@ -35,7 +35,7 @@ class MemberController {
     }
   };
 
-  deleteMember = async (req: Request, res: Response) => {
+  deleteMember = async (req: Request, res: Response, next: NextFunction) => {
     const { rid } = req.params;
     try {
       const result = await memberService.deleteMember(rid);
@@ -48,6 +48,24 @@ class MemberController {
     } catch (error) {
       console.error('Error deleting member:', error);
       res.status(500).json({ success: false, message: 'Server error' });
+      next(error);
+    }
+  };
+
+  updateMemberByRid = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const {rid} = req.params;
+    const updatedMember = req.body;
+    try {
+      const result = await memberService.updateMemberByRid(updatedMember, rid);
+      res.status(200).json({
+        statusText: 'SUCCESS',
+        message: 'Member updated successfully',
+        data: result,
+      });
+    } catch (error) {
+      console.error('Error when updating member:', error);
+      res.status(500).json({ success: false, message: 'Server error when update member' });
+      next(error);
     }
   };
 }

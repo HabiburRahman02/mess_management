@@ -1,37 +1,39 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import { depositService } from '@/services/depositService';
 import { useQuery } from '@tanstack/react-query';
 import { AiOutlineEye } from 'react-icons/ai';
-import AddDepositModal from './components/AddDepositModal';
 import { FaEdit } from 'react-icons/fa';
-import DepositDetailModal from './components/DepositDetailModal';
-import UpdateDepositModal from './components/UpdateDepositModal';
+import { mealService } from '@/services/mealService';
+import MealDetailModal from './components/MealDetailModal';
+import AddMealModal from './components/AddMealModal';
+import UpdateMealModal from './components/UpdateMealModal';
 
-type Deposit = {
-  rid: string;
-  name: string;
-  email: string;
-  total_deposit: number;
+type Meal = {
+  member_id: string;
+  member_name: string;
+  member_email: string;
+  meal_month: string;
+  total_meals: string;
 };
+
 const role = 'manager';
 
-const Deposits: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const Meals: React.FC = () => {
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [selectedRid, setSelectedRid] = useState<string | null>(null);
+  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+  const [selectedMemberMealId, setSelectedMemberMealId] = useState<string | null>(null);
 
   const {
-    data: deposits,
+    data: meals,
     isLoading,
     isError,
     error,
-  } = useQuery<Deposit[]>({
-    queryKey: ['deposits'],
-    queryFn: depositService.getDeposits,
+  } = useQuery<Meal[]>({
+    queryKey: ['get-meals'],
+    queryFn: mealService.getMeals,
   });
 
   if (isLoading) return <p>Loading...</p>;
@@ -39,30 +41,31 @@ const Deposits: React.FC = () => {
 
   return (
     <div className="p-4">
-      {/* Add Deposit Modal */}
-      <AddDepositModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
+      {/* View Modal for meal detail */}
+      <MealDetailModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        selectedMemberId={selectedMemberId}
+      ></MealDetailModal>
 
-      {/* deposit modal */}
-      <DepositDetailModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        selectedId={selectedId}
-      ></DepositDetailModal>
-
-      {/* Update modal */}
-      <UpdateDepositModal
+      {/* Update meal modal */}
+      <UpdateMealModal
         isOpen={isUpdateModalOpen}
         onClose={() => setIsUpdateModalOpen(false)}
-        selectedRid={selectedRid}
-      ></UpdateDepositModal>
+        selectedMemberMealId={selectedMemberMealId}
+      ></UpdateMealModal>
+
+      {/* Add meal modal */}
+      <AddMealModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)}></AddMealModal>
+
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Deposits</h1>
+        <h1 className="text-2xl font-bold">Meals</h1>
         {role === 'manager' && (
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700"
           >
-            Add Deposit
+            Add meals
           </button>
         )}
       </div>
@@ -73,7 +76,8 @@ const Deposits: React.FC = () => {
               <th className="bg-blue-50 px-4 py-4">No.</th>
               <th className="bg-blue-50 px-4 py-4">Full Name</th>
               <th className="bg-blue-50 px-4 py-4">Email</th>
-              <th className="bg-blue-50 px-4 py-4">Deposit Total</th>
+              <th className="bg-blue-50 px-4 py-4">Month</th>
+              <th className="bg-blue-50 px-4 py-4">Total Meals</th>
               <th className="bg-blue-50 px-4 py-4">Action</th>
             </tr>
           </thead>
@@ -83,20 +87,19 @@ const Deposits: React.FC = () => {
             </div>
           ) : (
             <tbody className="divide-y divide-gray-100">
-              {deposits?.map((deposit, idx) => (
-                <tr key={deposit.rid} className="hover:bg-blue-50">
+              {meals?.map((meal, idx) => (
+                <tr key={idx} className="hover:bg-blue-50">
                   <td className="whitespace-nowrap px-4 py-4">{idx + 1}</td>
-                  <td className="whitespace-nowrap px-4 py-4">{deposit.name || 'N/A'}</td>
-                  <td className="whitespace-nowrap px-4 py-4">{deposit.email || 'N/A'}</td>
-                  <td className="whitespace-nowrap px-4 py-4">
-                    {deposit.total_deposit || 'N/A'} TK
-                  </td>
+                  <td className="whitespace-nowrap px-4 py-4">{meal?.member_name || 'N/A'}</td>
+                  <td className="whitespace-nowrap px-4 py-4">{meal.member_email || 'N/A'}</td>
+                  <td className="whitespace-nowrap px-4 py-4">{meal.meal_month || 'N/A'}</td>
+                  <td className="whitespace-nowrap px-4 py-4">{meal.total_meals || 'N/A'}</td>
                   {/* Action Column */}
                   <td className="whitespace-nowrap px-4 py-4 text-center flex gap-3 items-center">
                     <button
                       onClick={() => {
-                        setSelectedId(deposit.rid);
-                        setIsModalOpen(true);
+                        setSelectedMemberId(meal.member_id);
+                        setIsDetailModalOpen(true);
                       }}
                       className="text-green-600 hover:text-green-800 flex items-center justify-center cursor-pointer"
                     >
@@ -105,7 +108,7 @@ const Deposits: React.FC = () => {
                     {role === 'manager' && (
                       <button
                         onClick={() => {
-                          setSelectedRid(deposit.rid);
+                          setSelectedMemberMealId(meal.member_id);
                           setIsUpdateModalOpen(true);
                         }}
                         className="text-blue-600 hover:text-blue-800 flex items-center justify-center cursor-pointer"
@@ -124,4 +127,4 @@ const Deposits: React.FC = () => {
   );
 };
 
-export default Deposits;
+export default Meals;

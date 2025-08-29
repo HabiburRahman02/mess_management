@@ -13,19 +13,20 @@ type AddMemberModalProps = {
 const AddMemberModal: React.FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
   const queryClient = useQueryClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name || !email || !phone) return;
-    const newMember = { name, email, phone };
-
+    if (!name || !email || !phone || !address) return;
+    const newMember = { name, email, address, phone };
+    console.log('newMember', newMember);
     try {
       const res = await memberService.addMember(newMember);
       console.log('res', res);
-      if (res.statusText === 'SUCCESS') {
+      if (res?.statusText === 'SUCCESS') {
         Swal.fire({
           title: `Congratulation!`,
           text: `Now ${name} is new member in you mess`,
@@ -37,13 +38,14 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
       }
       setName('');
       setEmail('');
+      setAddress('');
       setPhone('');
       onClose();
       queryClient.invalidateQueries({ queryKey: ['members'] });
     } catch (error) {
       Swal.fire({
         title: `Failed`,
-        text: `Failed to deposit`,
+        text: `Failed to add member`,
         icon: 'error',
       });
     }
@@ -52,8 +54,8 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-sm md:max-w-md rounded bg-white p-6 shadow-lg">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50">
+      <div className="w-full max-w-sm md:max-w-xl rounded bg-white p-6 shadow-lg">
         <h2 className="text-xl font-bold mb-4">Add Member</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -70,6 +72,14 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ isOpen, onClose }) => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter member email"
+            required
+          />
+          <InputField
+            label="Address"
+            type="address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="Enter member address"
             required
           />
           <InputField

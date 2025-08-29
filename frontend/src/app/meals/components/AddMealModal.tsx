@@ -1,61 +1,58 @@
 'use client';
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { depositService } from '@/services/depositService';
 import Swal from 'sweetalert2';
 import { memberService } from '@/services/memberService';
 import InputField from '@/components/common/InputField';
 import InputSelect from '@/components/common/InputSelect';
+import { mealService } from '@/services/mealService';
 
-type AddDepositModalProps = {
+type AddMealModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-const AddDepositModal: React.FC<AddDepositModalProps> = ({ isOpen, onClose }) => {
+const AddMealModal: React.FC<AddMealModalProps> = ({ isOpen, onClose }) => {
   const [memberId, setMemberId] = useState('');
-  const [amount, setAmount] = useState('');
+  const [mealCount, setMealCount] = useState('');
   const queryClient = useQueryClient();
 
   // fetch all members for dropdown
-  const { data: members } = useQuery({
-    queryKey: ['members'],
+  const { data: meals } = useQuery({
+    queryKey: ['meals'],
     queryFn: memberService.getMembers,
   });
 
   const memberOptions = [
     { value: '', label: 'Select Member' },
-    ...(members?.map((m: { rid: string; name: string }) => ({ value: m.rid, label: m.name })) ??
-      []),
+    ...(meals?.map((m: { rid: string; name: string }) => ({ value: m.rid, label: m.name })) ?? []),
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!memberId || !amount) return;
-
+    if (!memberId || !mealCount) return;
     try {
-      await depositService.addDeposit({
+      await mealService.addMeal({
         member_id: memberId,
-        amount,
+        meal_count: mealCount,
       });
       Swal.fire({
-        title: `${amount} Tk`,
-        text: 'Deposit successfully',
+        title: `${mealCount} Meals`,
+        text: 'Meals added successfully',
         icon: 'success',
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
       });
-      setAmount('');
+      setMealCount('');
       setMemberId('');
       onClose();
-      queryClient.invalidateQueries({ queryKey: ['deposits'] });
-      queryClient.invalidateQueries({ queryKey: ['deposit', memberId] });
+      queryClient.invalidateQueries({ queryKey: ['get-meals'] });
+      queryClient.refetchQueries({ queryKey: ['get-meals'] });
     } catch (error) {
       Swal.fire({
         title: `Failed`,
-        text: `Failed to deposit`,
+        text: `Failed to add meal`,
         icon: 'error',
       });
     }
@@ -66,10 +63,12 @@ const AddDepositModal: React.FC<AddDepositModalProps> = ({ isOpen, onClose }) =>
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50">
       <div className="w-full max-w-sm md:max-w-md rounded bg-white p-6 shadow-lg">
-        <h2 className="text-xl font-bold mb-4">Add Deposit</h2>
-
+        <h2 className="text-xl font-bold mb-4 flex justify-between items-center">
+          <span>Add Meals</span>
+          <span className='font-medium'>{new Date().toISOString().split('T')[0]}</span>
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Select Member */}
+          {/* Member */}
           <InputSelect
             label="Select Member"
             onChange={(e) => setMemberId(e.target.value)}
@@ -80,11 +79,11 @@ const AddDepositModal: React.FC<AddDepositModalProps> = ({ isOpen, onClose }) =>
           {/* Amount */}
           <InputField
             type="number"
-            label="Amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            label="Meal Count"
+            value={mealCount}
+            onChange={(e) => setMealCount(e.target.value)}
             required={true}
-            placeholder="Enter deposit amount"
+            placeholder="Enter meal amount"
           ></InputField>
 
           {/* Actions */}
@@ -109,4 +108,4 @@ const AddDepositModal: React.FC<AddDepositModalProps> = ({ isOpen, onClose }) =>
   );
 };
 
-export default AddDepositModal;
+export default AddMealModal;

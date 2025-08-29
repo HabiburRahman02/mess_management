@@ -26,8 +26,8 @@ export default function Navbar() {
           <Link href="/deposits" className="hover:text-gray-200 transition">
           Deposits
         </Link>
-        <Link href="/add-member" className="hover:text-gray-200 transition">
-          Add Member
+        <Link href="/meals" className="hover:text-gray-200 transition">
+          Meals
         </Link>
       </div>
     </nav>

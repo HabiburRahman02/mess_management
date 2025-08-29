@@ -14,15 +14,19 @@ type Member = {
   name: string;
   email: string;
   phone: string;
+  address: string;
   created_at: string;
+  status: string;
   updated_at: string;
 };
+const role = 'manager';
 
 const Members: React.FC = () => {
   const [memberId, setMemberId] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const queryClient = useQueryClient();
+
   const {
     data: members,
     isLoading,
@@ -67,7 +71,7 @@ const Members: React.FC = () => {
         } catch (error) {
           Swal.fire({
             title: 'Error!',
-            text: 'This member already deposit. thats why you can not delete',
+            text: 'This member already deposit or ate meal. thats why you can not delete',
             icon: 'error',
           });
         }
@@ -94,12 +98,14 @@ const Members: React.FC = () => {
       {/* Member Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Member Total</h1>
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700"
-        >
-          Add New
-        </button>
+        {role === 'manager' && (
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700"
+          >
+            Add New
+          </button>
+        )}
       </div>
       <div className="overflow-x-auto border border-blue-600 rounded-lg">
         <table className="w-full divide-y divide-gray-200 text-left text-sm max-w-sm sm:max-w-xl md:max-w-full">
@@ -109,8 +115,10 @@ const Members: React.FC = () => {
               <th className="bg-blue-50 px-4 py-4">Full Name</th>
               <th className="bg-blue-50 px-4 py-4">Email</th>
               <th className="bg-blue-50 px-4 py-4">Phone No.</th>
+              <th className="bg-blue-50 px-4 py-4">Address</th>
               <th className="bg-blue-50 px-4 py-4">Joining Date</th>
-              <th className="bg-blue-50 px-4 py-4">Action</th>
+              <th className="bg-blue-50 px-4 py-4">Status</th>
+              {role === 'manager' && <th className="bg-blue-50 px-4 py-4">Action</th>}
             </tr>
           </thead>
           {isLoading ? (
@@ -125,6 +133,7 @@ const Members: React.FC = () => {
                   <td className="whitespace-nowrap px-4 py-4">{member.name || 'N/A'}</td>
                   <td className="whitespace-nowrap px-4 py-4">{member.email || 'N/A'}</td>
                   <td className="whitespace-nowrap px-4 py-4">{member.phone || 'N/A'}</td>
+                  <td className="whitespace-nowrap px-4 py-4">{member.address || 'N/A'}</td>
                   <td className="whitespace-nowrap px-4 py-4">
                     {member.created_at
                       ? new Date(member.created_at).toLocaleDateString('en-GB', {
@@ -134,24 +143,39 @@ const Members: React.FC = () => {
                         })
                       : 'N/A'}
                   </td>
+                  <td className="whitespace-nowrap px-4 py-4">
+                    <span
+                      className={`px-2 py-1 text-sm font-medium capitalize rounded-full ${
+                        member.status === 'active'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}
+                    >
+                      {member.status || 'N/A'}
+                    </span>
+                  </td>
 
                   {/* Action Column */}
-                  <td className=" gap-2 whitespace-nowrap px-4 py-4 text-center flex items-center">
-                    <button
-                      onClick={() => {
-                        setMemberId(member.rid);
-                        setIsUpdateModalOpen(true);
-                      }}
-                      className="text-sky-600 hover:text-sky-800 flex items-center justify-center cursor-pointer"
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteMember(member.rid)}
-                      className="text-red-600 hover:text-red-800 flex items-center justify-center cursor-pointer"
-                    >
-                      <FaDeleteLeft />
-                    </button>
+                  <td className="gap-2 whitespace-nowrap px-4 py-4 text-center flex items-center">
+                    {role === 'manager' && (
+                      <>
+                        <button
+                          onClick={() => {
+                            setMemberId(member.rid);
+                            setIsUpdateModalOpen(true);
+                          }}
+                          className="text-sky-600 hover:text-sky-800 flex items-center justify-center cursor-pointer"
+                        >
+                          <FaEdit />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteMember(member.rid)}
+                          className="text-red-600 hover:text-red-800 flex items-center justify-center cursor-pointer"
+                        >
+                          <FaDeleteLeft />
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

@@ -16,7 +16,7 @@ export const memberService = {
     throw new Error('Failed to fetch members');
   },
 
-  addMember: async (newMember: { name: string; email: string; phone: string }) => {
+  addMember: async (newMember: { name: string; email: string; address: string; phone: string }) => {
     const result = await axiosInstance.post('/members', newMember);
     return result?.data;
   },
@@ -24,5 +24,5 @@ export const memberService = {
   deleteMember: async (rid: string) => {
     const result = await axiosInstance.delete(`/members/${rid}`);
     return result?.data;
-  },  
+  },
 };

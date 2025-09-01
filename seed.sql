@@ -25,13 +25,7 @@ CREATE TABLE members (
     updated_at TIMESTAMP DEFAULT NOW()
 );
  
- INSERT INTO members (name, email, phone, address, status)
-VALUES
-('Habibur Rahman', 'habib@example.com', '01711111111', 'Dhaka, Bangladesh', 'active'),
-('Ayesha Akter', 'ayesha@example.com', '01722222222', 'Chattogram, Bangladesh', 'active'),
-('Tanvir Hasan', 'tanvir@example.com', '01733333333', 'Rajshahi, Bangladesh', 'inactive'),
-('Mehedi Hasan', 'mehedi@example.com', '01744444444', 'Sylhet, Bangladesh', 'active'),
-('Nusrat Jahan', 'nusrat@example.com', '01755555555', 'Khulna, Bangladesh', 'inactive');
+
 
 CREATE TABLE deposits (
     rid UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -59,7 +53,16 @@ CREATE TABLE meals (
 ALTER TABLE meals
 DROP CONSTRAINT meals_member_id_meal_date_key;
 
+ALTER TABLE deposits
+ADD COLUMN deposit_date DATE DEFAULT (CURRENT_DATE);
 
+ INSERT INTO members (name, email, phone, address, status)
+VALUES
+('Habibur Rahman', 'habib@example.com', '01711111111', 'Dhaka, Bangladesh', 'active'),
+('Ayesha Akter', 'ayesha@example.com', '01722222222', 'Chattogram, Bangladesh', 'active'),
+('Tanvir Hasan', 'tanvir@example.com', '01733333333', 'Rajshahi, Bangladesh', 'inactive'),
+('Mehedi Hasan', 'mehedi@example.com', '01744444444', 'Sylhet, Bangladesh', 'active'),
+('Nusrat Jahan', 'nusrat@example.com', '01755555555', 'Khulna, Bangladesh', 'inactive');
 
 INSERT INTO meals (member_id, meal_date, month, meal_count)
 VALUES

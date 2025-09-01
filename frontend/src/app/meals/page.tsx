@@ -8,6 +8,7 @@ import { mealService } from '@/services/mealService';
 import MealDetailModal from './components/MealDetailModal';
 import AddMealModal from './components/AddMealModal';
 import UpdateMealModal from './components/UpdateMealModal';
+import { monthString } from '@/utils/currentMonth';
 
 type Meal = {
   member_id: string;
@@ -32,8 +33,8 @@ const Meals: React.FC = () => {
     isError,
     error,
   } = useQuery<Meal[]>({
-    queryKey: ['get-meals'],
-    queryFn: mealService.getMeals,
+    queryKey: ['get-meals', ],
+    queryFn: ()=> mealService.getMealsByMonth(monthString),
   });
 
   if (isLoading) return <p>Loading...</p>;

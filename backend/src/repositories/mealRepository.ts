@@ -1,9 +1,9 @@
 import pool from '../config/dbConfig';
 
 class MealRepository {
-  getMeals = async () => {
+  getMealsByMonth = async (month:string) => {
     const result = await pool.query(`
-    SELECT
+       SELECT
         mb.rid AS member_id,
         mb.name AS member_name,
         mb.email AS member_email,
@@ -11,9 +11,10 @@ class MealRepository {
         SUM(m.meal_count) AS total_meals
     FROM meals m
     JOIN members mb ON m.member_id = mb.rid
+    WHERE m.month = $1
     GROUP BY mb.rid, mb.name, mb.email, m.month
     ORDER BY mb.name;
-        `);
+        `,[month]);
     return result.rows;
   };
 

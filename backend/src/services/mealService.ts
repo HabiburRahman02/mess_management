@@ -1,8 +1,8 @@
 import mealRepository from '../repositories/mealRepository';
 
 class MealService {
-  getMeals = async () => {
-    return await mealRepository.getMeals();
+  getMealsByMonth = async (month:string) => {
+    return await mealRepository.getMealsByMonth(month);
   };
 
   getMealDetailsByMemberId = async (memberId: string) => {

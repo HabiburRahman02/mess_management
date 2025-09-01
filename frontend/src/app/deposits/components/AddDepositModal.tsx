@@ -15,6 +15,12 @@ type AddDepositModalProps = {
 const AddDepositModal: React.FC<AddDepositModalProps> = ({ isOpen, onClose }) => {
   const [memberId, setMemberId] = useState('');
   const [amount, setAmount] = useState('');
+  const [depositDate, setDepositDate] = useState(() => {
+  const today = new Date();
+  // YYYY-MM-DD format
+  return today.toISOString().split('T')[0];
+});
+
   const queryClient = useQueryClient();
 
   // fetch all members for dropdown
@@ -85,6 +91,13 @@ const AddDepositModal: React.FC<AddDepositModalProps> = ({ isOpen, onClose }) =>
             onChange={(e) => setAmount(e.target.value)}
             required={true}
             placeholder="Enter deposit amount"
+          ></InputField>
+          <InputField
+            type="date"
+            label="Deposit Date"
+            value={depositDate}
+            onChange={(e) => setDepositDate(e.target.value)}
+            required={true}
           ></InputField>
 
           {/* Actions */}

@@ -20,6 +20,24 @@ class MealRateController {
       next(error);
     }
   };
+
+  getPerMemberMealStatsByMonth = async (req: Request, res: Response, next: NextFunction) => {
+    const month = req.query.month as string;
+    try {
+      const result = await mealRateService.getPerMemberMealStatsByMonth(month);
+      res.status(200).json({
+        statusText: 'SUCCESS',
+        message: 'Get single member meal rate successfully',
+        data: result,
+      });
+    } catch (error) {
+      logger.error('Error when get single meal rate', {
+        input: req.body,
+        error,
+      });
+      next(error);
+    }
+  };
 }
 
 export default new MealRateController();

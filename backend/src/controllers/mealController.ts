@@ -3,9 +3,10 @@ import mealService from '../services/mealService';
 import { logger } from '../utilities/logger';
 
 class MealController {
-  getMeals = async (req: Request, res: Response, next: NextFunction) => {
+  getMealsByMonth = async (req: Request, res: Response, next: NextFunction) => {
+    const month = req.query.month as string;
     try {
-      const result = await mealService.getMeals();
+      const result = await mealService.getMealsByMonth(month);
       res.status(200).json({
         statusText: 'SUCCESS',
         message: 'Get all meal successfully',

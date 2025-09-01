@@ -1,8 +1,8 @@
 import axiosInstance from '@/api/axiosInstance';
 
 export const mealService = {
-  getMeals: async () => {
-    const result = await axiosInstance.get('/meals');
+  getMealsByMonth: async (month: string) => {
+    const result = await axiosInstance.get(`/meals?month=${month}`);
     return result?.data?.data;
   },
 
